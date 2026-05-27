@@ -1,0 +1,13 @@
+{
+  "record_id": "bc_0005",
+  "node_id": 5,
+  "zkp_valid": true,
+  "reputation_score": 0.6902,
+  "reputation_deficit": 0.3098,
+  "total_interactions": 12,
+  "matd_corrected_trust": 0.7082,
+  "isolation_status": "BENIGN",
+  "debsc_triggered": false,
+  "timestamp": 45.4533,
+  "mitigation": null
+}

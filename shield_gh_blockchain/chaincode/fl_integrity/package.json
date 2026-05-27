@@ -1,0 +1,16 @@
+{
+  "name": "shield-gh-fl-integrity",
+  "version": "1.0.0",
+  "description": "SHIELD-GH FL Gradient Integrity Chaincode — Eq 3.22",
+  "main": "fl_integrity.js",
+  "scripts": {
+    "start": "fabric-chaincode-node start"
+  },
+  "dependencies": {
+    "fabric-contract-api": "^2.5.0",
+    "fabric-shim": "^2.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

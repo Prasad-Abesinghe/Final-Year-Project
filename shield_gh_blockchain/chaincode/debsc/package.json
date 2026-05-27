@@ -1,0 +1,16 @@
+{
+  "name": "shield-gh-debsc",
+  "version": "1.0.0",
+  "description": "SHIELD-GH Dual-Evidence Blockchain Smart Contract (DEBSC)",
+  "main": "debsc.js",
+  "scripts": {
+    "start": "fabric-chaincode-node start"
+  },
+  "dependencies": {
+    "fabric-contract-api": "^2.5.0",
+    "fabric-shim": "^2.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

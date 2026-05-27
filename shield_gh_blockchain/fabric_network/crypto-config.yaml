@@ -1,0 +1,30 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: shield-gh.com
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: RSU1
+    Domain: rsu1.shield-gh.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+  - Name: RSU2
+    Domain: rsu2.shield-gh.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+  - Name: RSU3
+    Domain: rsu3.shield-gh.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
