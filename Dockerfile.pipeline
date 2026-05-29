@@ -1,0 +1,23 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install torch CPU-only first (large, benefits from layer caching)
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining pipeline dependencies
+COPY requirements.pipeline.txt .
+RUN pip install --no-cache-dir -r requirements.pipeline.txt
+
+# Copy source code
+COPY shield_gh_blockchain/ ./shield_gh_blockchain/
+COPY shield_gh_fl/         ./shield_gh_fl/
+
+# Create output directories (volumes will mount here)
+RUN mkdir -p shield_gh_blockchain/output/bc_records \
+             shield_gh_fl/output/fl_scores
+
+# Step 1: blockchain mock pipeline
+# Step 2: FL simulation
+CMD python shield_gh_blockchain/mock_mode/run_mock_pipeline.py && \
+    python shield_gh_fl/mock_mode/run_mock_fl.py

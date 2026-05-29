@@ -1,0 +1,55 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+venv_fl/
+.venv/
+env/
+ENV/
+
+# Node modules and frontend build artifacts
+node_modules/
+shield_gh_dashboard/frontend/dist/
+shield_gh_dashboard/frontend/.vite/
+
+# Large binary model weights
+*.pth
+*.pt
+
+# Large generated data files
+shield_gh_fl/data/partitions/
+shield_gh_fl/data/mock/
+
+# Logs
+*.log
+logs/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+
+# Git
+.git/
+.gitignore
+
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Docs
+*.md

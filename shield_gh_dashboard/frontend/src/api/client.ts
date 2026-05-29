@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const api = axios.create({ baseURL: 'http://localhost:8000' })
+const api = axios.create({ baseURL: '' })
 
 export const fetchSummary       = () => api.get('/api/system/summary').then(r => r.data)
 export const fetchBcRecords     = () => api.get('/api/blockchain/records').then(r => r.data)
