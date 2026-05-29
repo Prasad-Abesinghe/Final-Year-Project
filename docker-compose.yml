@@ -10,6 +10,7 @@ services:
     volumes:
       - bc_output:/app/shield_gh_blockchain/output
       - fl_output:/app/shield_gh_fl/output
+      - ns3_input:/app/ns3_input:ro
     restart: "no"
 
   # ── 2. FastAPI — reads from volumes, serves REST endpoints ──────
@@ -20,6 +21,7 @@ services:
     volumes:
       - bc_output:/app/shield_gh_blockchain/output:ro
       - fl_output:/app/shield_gh_fl/output:ro
+      - ns3_input:/app/ns3_input
     expose:
       - "8000"
     depends_on:
@@ -41,3 +43,4 @@ services:
 volumes:
   bc_output:
   fl_output:
+  ns3_input:

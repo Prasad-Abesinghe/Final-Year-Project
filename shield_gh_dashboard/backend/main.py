@@ -7,6 +7,7 @@ Read-only. No database. All data comes from JSON files written by Part 2 & 3.
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
+from typing import List, Any
 import json, glob, math
 
 app = FastAPI(title="SHIELD-GH Dashboard API", version="1.0.0")
@@ -14,7 +15,7 @@ app = FastAPI(title="SHIELD-GH Dashboard API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
@@ -22,6 +23,9 @@ BASE = Path(__file__).parent.parent.parent          # project root
 BC_DIR  = BASE / "shield_gh_blockchain" / "output" / "bc_records"
 FL_DIR  = BASE / "shield_gh_fl" / "output" / "fl_scores"
 FL_OUT  = BASE / "shield_gh_fl" / "output"
+NS3_DIR = BASE / "ns3_input"
+NS3_DIR.mkdir(parents=True, exist_ok=True)
+NS3_EVENTS_FILE = NS3_DIR / "events.jsonl"
 
 
 def _load_json(path: Path):
@@ -161,3 +165,27 @@ def get_topology():
         edges.append({"source": rsus[i]["id"], "target": rsus[i+1]["id"], "type": "rsu-rsu"})
 
     return {"nodes": nodes, "edges": edges}
+
+
+# ── NS-3 integration ──────────────────────────────────────────────────────────
+
+@app.post("/api/ns3/events")
+def receive_ns3_events(events: List[Any]):
+    """Receive vehicle events from NS-3 simulation running on another machine."""
+    if not events:
+        raise HTTPException(status_code=400, detail="Empty events list")
+    lines = [json.dumps(e) for e in events]
+    NS3_EVENTS_FILE.write_text('\n'.join(lines))
+    return {
+        "status": "saved",
+        "events_received": len(events),
+        "next_step": "docker compose run --rm pipeline python shield_gh_blockchain/mock_mode/run_mock_pipeline.py /app/ns3_input/events.jsonl"
+    }
+
+
+@app.get("/api/ns3/status")
+def ns3_status():
+    if not NS3_EVENTS_FILE.exists():
+        return {"file_ready": False, "event_count": 0}
+    lines = [l for l in NS3_EVENTS_FILE.read_text().strip().split('\n') if l.strip()]
+    return {"file_ready": True, "event_count": len(lines), "path": str(NS3_EVENTS_FILE)}
