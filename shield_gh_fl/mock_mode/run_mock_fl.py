@@ -148,7 +148,12 @@ def main():
               f"rejected={summary['rejected']}  "
               f"avg_accuracy={avg_acc:.4f}")
 
-    # Step 5 — Export final scores
+    # Step 5 — Save trained model weights
+    model_path = BASE_DIR / "output" / "global_model.pth"
+    torch.save(global_model.state_dict(), model_path)
+    print(f"\n[SAVED] Global model -> {model_path}")
+
+    # Step 6 — Export final scores
     export_fl_scores(global_model, N_ROUNDS)
 
     # Step 6 — Final evaluation summary

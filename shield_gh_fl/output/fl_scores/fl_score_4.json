@@ -1,8 +1,8 @@
 {
   "node_id": 4,
-  "malicious_prob": 0.0,
+  "malicious_prob": 0.0024,
   "predicted_variant": "BENIGN",
-  "confidence": 1.0,
+  "confidence": 0.9976,
   "round_num": 15,
   "local_accuracy": 1.0,
   "timestamp": 509.0
