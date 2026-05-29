@@ -2,14 +2,17 @@ version: "3.9"
 
 services:
 
-  # ── 1. Run blockchain + FL simulation, write results to volumes ──
+  # ── 1. Run blockchain + FL + LLM pipeline, write results to volumes ─
   pipeline:
     build:
       context: .
       dockerfile: Dockerfile.pipeline
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
     volumes:
       - bc_output:/app/shield_gh_blockchain/output
       - fl_output:/app/shield_gh_fl/output
+      - llm_output:/app/shield_gh_llm/output
       - ns3_input:/app/ns3_input:ro
     restart: "no"
 
@@ -21,6 +24,7 @@ services:
     volumes:
       - bc_output:/app/shield_gh_blockchain/output:ro
       - fl_output:/app/shield_gh_fl/output:ro
+      - llm_output:/app/shield_gh_llm/output:ro
       - ns3_input:/app/ns3_input
     expose:
       - "8000"
@@ -43,4 +47,5 @@ services:
 volumes:
   bc_output:
   fl_output:
+  llm_output:
   ns3_input:

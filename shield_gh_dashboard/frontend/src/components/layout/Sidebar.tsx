@@ -6,6 +6,7 @@ import {
   BrainCircuit,
   Search,
   Shield,
+  Brain,
 } from "lucide-react";
 
 const links = [
@@ -14,6 +15,7 @@ const links = [
   { to: "/blockchain", icon: Link, label: "Blockchain" },
   { to: "/fl", icon: BrainCircuit, label: "Federated L." },
   { to: "/node/1", icon: Search, label: "Node Inspector" },
+  { to: "/threat", icon: Brain, label: "Threat Intel" },
 ];
 
 export default function Sidebar() {

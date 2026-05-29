@@ -167,6 +167,43 @@ def get_topology():
     return {"nodes": nodes, "edges": edges}
 
 
+# ── LLM Threat Scoring endpoints ─────────────────────────────────────────────
+
+LLM_DIR    = BASE / "shield_gh_llm" / "output"
+LLM_SCORES = LLM_DIR / "llm_scores"
+
+
+# ── DistilBERT Q_i scores (Section 3.6.3) ────────────────────────────────────
+
+@app.get("/api/llm/scores")
+def get_all_llm_scores():
+    scores = _all_json(LLM_SCORES, "llm_score_*.json")
+    return {"count": len(scores), "scores": scores}
+
+
+@app.get("/api/llm/scores/{node_id}")
+def get_llm_score(node_id: int):
+    return _load_json(LLM_SCORES / f"llm_score_{node_id}.json")
+
+
+# ── Threat narrative reports (fusion of BC + FL + LLM) ────────────────────────
+
+@app.get("/api/llm/summary")
+def get_llm_summary():
+    return _load_json(LLM_DIR / "llm_summary.json")
+
+
+@app.get("/api/llm/reports")
+def get_all_llm_reports():
+    reports = _all_json(LLM_DIR, "llm_report_*.json")
+    return {"count": len(reports), "reports": reports}
+
+
+@app.get("/api/llm/reports/{node_id}")
+def get_llm_report(node_id: int):
+    return _load_json(LLM_DIR / f"llm_report_{node_id}.json")
+
+
 # ── NS-3 integration ──────────────────────────────────────────────────────────
 
 @app.post("/api/ns3/events")

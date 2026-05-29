@@ -1,20 +1,25 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight, Brain, Zap, Cloud } from 'lucide-react'
 import StatusBadge from '../components/shared/StatusBadge'
-import { fetchBcRecords, fetchFlScores } from '../api/client'
-import type { BcRecord, FlScore } from '../types'
+import { fetchBcRecords, fetchFlScores, fetchLlmScores } from '../api/client'
+import type { BcRecord, FlScore, LlmScore } from '../types'
 
 export default function NodeInspector() {
   const { id }         = useParams()
   const navigate       = useNavigate()
   const [bcRecords, setBcRecords] = useState<BcRecord[]>([])
   const [flScores, setFlScores]   = useState<FlScore[]>([])
+  const [llmScores, setLlmScores] = useState<LlmScore[]>([])
   const [loading, setLoading]     = useState(true)
 
   useEffect(() => {
-    Promise.all([fetchBcRecords(), fetchFlScores()])
-      .then(([bc, fl]) => { setBcRecords(bc.records); setFlScores(fl.scores) })
+    Promise.allSettled([fetchBcRecords(), fetchFlScores(), fetchLlmScores()])
+      .then(([bc, fl, llm]) => {
+        if (bc.status  === 'fulfilled') setBcRecords(bc.value.records)
+        if (fl.status  === 'fulfilled') setFlScores(fl.value.scores)
+        if (llm.status === 'fulfilled') setLlmScores(llm.value.scores)
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -24,6 +29,7 @@ export default function NodeInspector() {
   const currentId  = parseInt(id ?? String(allNodeIds[0]))
   const bcRecord   = bcRecords.find(r => r.node_id === currentId)
   const flScore    = flScores.find(s => s.node_id === currentId)
+  const llmScore   = llmScores.find(s => s.node_id === currentId)
   const currentIdx = allNodeIds.indexOf(currentId)
 
   const prev = allNodeIds[currentIdx - 1]
@@ -159,6 +165,56 @@ export default function NodeInspector() {
           )}
         </div>
       </div>
+
+      {/* LLM Q_i Score */}
+      {llmScore && (
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 space-y-4">
+          <h2 className="text-purple-400 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
+            <Brain size={14} /> DistilBERT LLM Score — Q<sub>i</sub>(t) (Eq 3.23)
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Q_i Threat Score', value: llmScore.Q_i.toFixed(4),
+                highlight: llmScore.Q_i > 0.5 ? 'text-red-400' : 'text-green-400' },
+              { label: 'Predicted Label',  value: llmScore.label,    highlight: 'text-blue-300' },
+              { label: 'Confidence',       value: `${(llmScore.confidence * 100).toFixed(1)}%`, highlight: 'text-white' },
+              { label: 'Inference Tier',   value: llmScore.tier_used,
+                highlight: llmScore.tier_used === 'EDGE' ? 'text-yellow-400' : 'text-blue-400' },
+              { label: 'Latency',          value: `${llmScore.latency_ms.toFixed(0)} ms`, highlight: 'text-white' },
+              { label: 'Window Events',    value: String(llmScore.window_events), highlight: 'text-white' },
+            ].map(({ label, value, highlight }) => (
+              <div key={label} className="bg-slate-900 rounded-lg p-3">
+                <p className="text-slate-500 text-xs">{label}</p>
+                <p className={`font-mono text-sm mt-0.5 font-bold ${highlight}`}>{value}</p>
+              </div>
+            ))}
+          </div>
+          {/* Q_i bar */}
+          <div className="bg-slate-900 rounded-lg p-3">
+            <p className="text-slate-500 text-xs mb-2">Q<sub>i</sub>(t) — Semantic Threat Probability</p>
+            <div className="bg-slate-700 rounded-full h-4 overflow-hidden">
+              <div className={`h-4 rounded-full ${llmScore.Q_i > 0.5 ? 'bg-red-500' : 'bg-green-500'}`}
+                   style={{ width: `${Math.max(llmScore.Q_i * 100, 1)}%` }} />
+            </div>
+            <p className="text-slate-400 text-xs mt-1">{(llmScore.Q_i * 100).toFixed(3)}% — 1 - P(BENIGN)</p>
+          </div>
+          {/* Softmax breakdown */}
+          <div className="bg-slate-900 rounded-lg p-3">
+            <p className="text-slate-500 text-xs mb-2">Softmax Probabilities (all 7 classes)</p>
+            <div className="space-y-1.5">
+              {Object.entries(llmScore.softmax_probs).sort(([, a], [, b]) => b - a).map(([lbl, p]) => (
+                <div key={lbl} className="flex items-center gap-2">
+                  <span className="text-slate-400 text-xs font-mono w-14 text-right flex-shrink-0">{lbl}</span>
+                  <div className="flex-1 bg-slate-700 rounded-full h-2 overflow-hidden">
+                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${p * 100}%` }} />
+                  </div>
+                  <span className="text-slate-400 text-xs font-mono w-12">{(p * 100).toFixed(1)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Raw JSON */}
       {(bcRecord || flScore) && (

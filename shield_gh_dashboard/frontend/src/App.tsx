@@ -5,6 +5,7 @@ import NetworkTopology from './pages/NetworkTopology'
 import BlockchainMonitor from './pages/BlockchainMonitor'
 import FLDashboard from './pages/FLDashboard'
 import NodeInspector from './pages/NodeInspector'
+import ThreatIntelligence from './pages/ThreatIntelligence'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
             <Route path="/blockchain" element={<BlockchainMonitor />} />
             <Route path="/fl"         element={<FLDashboard />} />
             <Route path="/node/:id"   element={<NodeInspector />} />
+            <Route path="/threat"     element={<ThreatIntelligence />} />
           </Routes>
         </main>
       </div>

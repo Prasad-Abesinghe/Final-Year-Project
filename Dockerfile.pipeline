@@ -5,19 +5,31 @@ WORKDIR /app
 # Install torch CPU-only first (large, benefits from layer caching)
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
-# Install remaining pipeline dependencies
+# Install remaining pipeline dependencies (includes HuggingFace + Anthropic)
 COPY requirements.pipeline.txt .
 RUN pip install --no-cache-dir -r requirements.pipeline.txt
 
 # Copy source code
 COPY shield_gh_blockchain/ ./shield_gh_blockchain/
 COPY shield_gh_fl/         ./shield_gh_fl/
+# ARG before COPY busts cache when LLM code changes (pass --build-arg LLM_V=<any-new-value>)
+ARG LLM_V=1
+COPY shield_gh_llm/        ./shield_gh_llm/
+COPY create_attacker_demo.py .
 
 # Create output directories (volumes will mount here)
 RUN mkdir -p shield_gh_blockchain/output/bc_records \
-             shield_gh_fl/output/fl_scores
+             shield_gh_fl/output/fl_scores \
+             shield_gh_llm/output/models/edge_llm \
+             shield_gh_llm/output/llm_scores \
+             shield_gh_llm/output/hf_home
 
-# Step 1: blockchain mock pipeline
-# Step 2: FL simulation
+# HuggingFace cache inside the llm_output volume so DistilBERT is downloaded once
+ENV HF_HOME=/app/shield_gh_llm/output/hf_home
+ENV TRANSFORMERS_CACHE=/app/shield_gh_llm/output/hf_home
+
+# Step 1: blockchain  Step 2: FL  Step 3: DistilBERT classifier  Step 4: threat narratives
 CMD python shield_gh_blockchain/mock_mode/run_mock_pipeline.py && \
-    python shield_gh_fl/mock_mode/run_mock_fl.py
+    python shield_gh_fl/mock_mode/run_mock_fl.py && \
+    python shield_gh_llm/mock_mode/run_mock_llm_pipeline.py && \
+    python shield_gh_llm/mock_mode/run_mock_llm.py
