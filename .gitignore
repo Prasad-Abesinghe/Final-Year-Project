@@ -1,0 +1,71 @@
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.egg
+
+# Virtual environments
+venv/
+venv_fl/
+.venv/
+env/
+ENV/
+
+# ── Node / Frontend ───────────────────────────────────────────
+node_modules/
+shield_gh_dashboard/frontend/dist/
+shield_gh_dashboard/frontend/.vite/
+
+# ── PyTorch model weights (large binary files) ────────────────
+shield_gh_fl/output/global_model.pth
+*.pth
+*.pt
+
+# ── Large generated data files ────────────────────────────────
+shield_gh_fl/data/partitions/
+shield_gh_fl/data/mock/
+
+# ── Compiled bytecode ─────────────────────────────────────────
+shield_gh_blockchain/client/__pycache__/
+shield_gh_blockchain/mock_mode/__pycache__/
+shield_gh_fl/data/__pycache__/
+shield_gh_fl/fl/__pycache__/
+shield_gh_fl/model/__pycache__/
+shield_gh_fl/mock_mode/__pycache__/
+shield_gh_dashboard/backend/__pycache__/
+
+# ── OS files ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Environment / secrets ─────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+
+# ── Coverage / test output ────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
