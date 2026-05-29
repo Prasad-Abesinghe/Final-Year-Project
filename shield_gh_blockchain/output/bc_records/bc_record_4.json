@@ -2,12 +2,12 @@
   "record_id": "bc_0004",
   "node_id": 4,
   "zkp_valid": true,
-  "reputation_score": 0.6918,
-  "reputation_deficit": 0.3082,
+  "reputation_score": 0.7213,
+  "reputation_deficit": 0.2787,
   "total_interactions": 12,
-  "matd_corrected_trust": 0.6935,
+  "matd_corrected_trust": 0.7232,
   "isolation_status": "BENIGN",
   "debsc_triggered": false,
-  "timestamp": 28.438,
+  "timestamp": 34.4506,
   "mitigation": null
 }
